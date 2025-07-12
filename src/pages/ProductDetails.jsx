@@ -39,11 +39,13 @@ export function ProductDetails() {
 
                 <div className={styles.detailsSection}>
                     <h1 className={styles.title}>{product.title}</h1>
-                    <div className={styles.rating}>
-                        ⭐ {product.rating}/5
-                        <span className={styles.brand}>{product.brand}</span>
+                    <div className={styles.ratingContainer}>
+                        <div className={styles.rating}>
+                            <p>⭐ {product.rating}/5</p>
+                            <span className={styles.brand}>{product.brand}</span>
+                        </div>
+                        <p className={styles.price}>${product.price}</p>
                     </div>
-                    <p className={styles.price}>${product.price}</p>
                     <p className={styles.description}>{product.description}</p>
                     
                     <div className={styles.actions}>

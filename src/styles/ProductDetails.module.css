@@ -9,6 +9,9 @@
 .productContainer {
     display: grid;
     grid-template-columns: 1fr 1fr;
+    margin-top: 3rem;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+    gap: 1rem;
 }
 
 .imageSection {
@@ -62,11 +65,17 @@
     color: var(--text-color);
 }
 
-.rating {
+.ratingContainer {
     display: flex;
     align-items: center;
-    gap: 1rem;
+    gap: 3rem;
     font-size: 1.1rem;
+    padding: 1rem 2rem;
+}
+
+.rating {
+    display: flex;
+    gap: 1rem;
 }
 
 .brand {
@@ -85,15 +94,19 @@
 }
 
 .description {
-    line-height: 1.6;
+    width: 300px;
+    line-height: 2;
     font-size: 1.1rem;
     padding: 2rem;
+    align-self: flex-start;
+    text-align: left;
 }
 
 .actions {
     display: flex;
     gap: 1rem;
     margin-top: 1rem;
+    align-self: flex-end;
 }
 
 .addToCart, .buyNow {
