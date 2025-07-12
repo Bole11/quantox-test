@@ -1,0 +1,116 @@
+.loginContainer {
+  display: flex;
+  flex-direction: column;
+  background-color: var(--bg-color);
+}
+
+.loginForm {
+  max-width: 400px;
+  width: 90%;
+  margin: 2rem auto;
+  padding: 2rem;
+  background-color: var(--surface-color);
+  border-radius: 12px;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+}
+
+.formTitle {
+  color: var(--primary);
+  text-align: center;
+  margin-bottom: 5rem;
+  font-size: 1.8rem;
+}
+
+.formGroup {
+  width: 100%;
+  margin-bottom: 1.5rem;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+}
+
+.formLabel {
+  display: block;
+  margin-bottom: 0.5rem;
+  color: var(--text-color);
+  font-weight: 500;
+}
+
+.formInput {
+  width: 80%;
+  padding: 0.8rem 1rem;
+  border: 1px solid #ddd;
+  border-radius: 8px;
+  font-size: 1rem;
+  background-color: var(--surface-color);
+  color: var(--text-color);
+  transition: border-color 0.3s;
+}
+
+.formInput:focus {
+  outline: none;
+  border-color: var(--primary);
+  box-shadow: 0 0 0 2px rgba(67, 97, 238, 0.2);
+}
+
+.errorMessage {
+  width: 80%;
+  display: block;
+  margin: 1rem 0 0 -1rem;
+  color: #ff4444;
+  font-size: 0.9rem;
+  text-align: left;
+}
+
+.submitButton {
+  width: 50%;
+  padding: 1rem;
+  margin-top: 5rem;
+  background-color: var(--primary);
+  color: white;
+  border: none;
+  border-radius: 8px;
+  font-size: 1rem;
+  font-weight: 600;
+  cursor: pointer;
+  transition: background-color 0.3s, transform 0.2s;
+}
+
+.submitButton:hover {
+  background-color: var(--secondary);
+  transform: translateY(-1px);
+}
+
+.submitButton:disabled {
+  background-color: #cccccc;
+  cursor: not-allowed;
+  transform: none;
+}
+
+.continueButton {
+  display: inline-block;
+  margin-top: 15rem;
+  padding: 0.8rem 1.5rem;
+  background-color: var(--primary);
+  color: white;
+  text-decoration: none;
+  border-radius: 6px;
+  font-weight: 600;
+  text-align: center;
+  transition: all 0.3s ease;
+  border: 2px solid var(--primary);
+}
+
+.continueButton:hover {
+  background-color: transparent;
+  color: var(--primary);
+  transform: translateY(-2px);
+  box-shadow: 0 4px 8px rgba(0,0,0,0.1);
+}
+
+.dark .continueButton:hover {
+  background-color: transparent;
+  color: var(--accent);
+  border-color: var(--accent);
+}

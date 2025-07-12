@@ -1,0 +1,60 @@
+@import '@fontsource/merriweather/400.css';
+@import '@fontsource/merriweather/700.css';
+
+:root {
+  font-family: Merriweather, Inter, system-ui, Avenir, Helvetica, Arial, sans-serif;
+  line-height: 1.5;
+  font-weight: 400;;
+
+  font-synthesis: none;
+  text-rendering: optimizeLegibility;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+}
+
+*,
+*::after,
+*::before {
+	margin: 0;
+	padding: 0;
+	box-sizing: inherit;
+}
+
+html {
+	font-size: 62.5%;
+}
+
+/* Light Theme */
+.light {
+  --bg-color: #F8F9FA;
+  --surface-color: #FFFFFF;
+  --text-color: #212529;
+  --primary: #4361ee;
+  --secondary: #7209B7;
+  --accent: #4CC9F0;
+  --surface-color: #ffffff; 
+  --dropdown-border-color: rgba(0, 0, 0, 0.1);
+}
+
+/* Dark Theme */
+.dark {
+  --bg-color: #121212;
+  --surface-color: #1E1E1E;
+  --text-color: #E1E1E1;
+  --primary: #4895EF;
+  --secondary: #B5179E;
+  --accent: #F72585;
+  --surface-color: #1e1e1e;
+  --dropdown-border-color: rgba(255, 255, 255, 0.1); 
+}
+
+body {
+  background-color: var(--bg-color);
+  color: var(--text-color);
+  transition: background 0.3s ease, color 0.3s ease;
+}
+
+.product-card {
+  background: var(--surface-color);
+  color: var(--text-color);
+}

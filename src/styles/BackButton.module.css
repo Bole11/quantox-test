@@ -1,0 +1,28 @@
+.backButton {
+    width: 10px;
+    display: flex;
+    align-items: center;
+    background: none;
+    border: none;
+    color: var(--primary);
+    font-size: 1rem;
+    cursor: pointer;
+    padding: 0.5rem 1rem;
+    border-radius: 4px;
+    transition: background-color 0.2s;
+}
+
+.backIcon {
+    width: 20px;
+    height: 20px;
+    transition: transform 0.2s ease;
+}
+
+.backButton:hover {
+    background-color: rgba(var(--primary-rgb), 0.1);
+    transform: scale(1.05); 
+}
+
+.backButton:hover .backIcon {
+    transform: scale(1.1); 
+}
