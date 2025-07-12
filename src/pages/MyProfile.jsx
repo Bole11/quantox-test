@@ -2,14 +2,10 @@ import { useContext } from "react";
 import { AuthContext } from "../context/AuthContext.jsx";
 import styles from "../styles/MyProfile.module.css";
 import { Header } from "../components/Header.jsx";
-import backDark from "../images/back-dark.png";
-import backLight from "../images/back-light.png";
-import { useTheme } from "../context/ThemeContext.jsx";
 import { BackButton } from "../components/BackButton.jsx";
 
 export function MyProfile() {
     const { user } = useContext(AuthContext);
-    const { theme } = useTheme();
 
     if (!user) {
         return (
