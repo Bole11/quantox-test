@@ -48,6 +48,7 @@ export const authApi = {
 };
 
 export const productsApi = {
-    getAll: () => api.get("/products"),
+    getAll: (query = '') => api.get(`/products/${query}`),
+    search: (term) => api.get(`/products/search?q=${term}`), 
     getById: (id) => api.get(`/products/${id}`)
 };

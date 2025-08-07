@@ -1,85 +1,106 @@
 import { ProductCard } from "../components/ProductCard.jsx";
 import { Header } from "../components/Header.jsx";
-import { useState, useEffect, useCallback } from "react";
+import { useState, useEffect, useCallback, useRef } from "react";
 import { useAuth } from "../context/AuthContext.jsx";
 import { productsApi } from "../api/auth.js";
 import { LoadingSpinner } from "../components/LoadingSpinner.jsx";
 import styles from "../styles/Home.module.css";
+import { debounce } from "lodash";
 
 export function Home() {
     const [products, setProducts] = useState([]);
     const [loading, setLoading] = useState(false);
     const [searchTerm, setSearchTerm] = useState('');
+    const [searchInput, setSearchInput] = useState('');
     const [page, setPage] = useState(1);
     const [hasMore, setHasMore] = useState(true);
     const { user } = useAuth();
 
-    const loadProducts = useCallback(async () => {
-        if (!hasMore || loading) return;
+    const debouncedSearch = useRef(
+        debounce((term) => {
+            setSearchTerm(term);
+            setPage(1);
+        }, 500)
+    ).current;
 
+    useEffect(() => {
+        return () => {
+            debouncedSearch.cancel();
+        };
+    }, [debouncedSearch]);
+
+    const loadProducts = useCallback(async () => {
+        if (loading) return;
+        
         setLoading(true);
         try {
-            const limit = 10;
-            const skip = (page - 1) * limit;
-            const res = await productsApi.getAll(`?limit=${limit}&skip=${skip}`);
-
-            setProducts(prev => {
-                const newProducts = res.data.products.filter(
-                    newProduct => !prev.some(product => product.id === newProduct.id)
+            let res;
+            if (searchTerm) {
+                res = await productsApi.search(searchTerm);
+                setProducts(res.data.products || []);
+                setHasMore(false);
+            } else {
+                const limit = 10;
+                const skip = (page - 1) * limit;
+                res = await productsApi.getAll(`?limit=${limit}&skip=${skip}`);
+                
+                setProducts(prev => 
+                    page === 1 
+                        ? res.data.products 
+                        : [...prev, ...res.data.products]
                 );
-                return [...prev, ...newProducts]
-            });
-            setHasMore(res.data.products.length === limit);
-            setPage(prev => prev + 1);
+                setHasMore(res.data.products.length === limit);
+            }
         } catch (error) {
             console.error("Failed to load products", error);
         } finally {
             setLoading(false);
         }
-    }, [page, hasMore, loading]);
+    }, [page, searchTerm, loading]);
 
     useEffect(() => {
         loadProducts();
-    }, []);
+    }, [page, searchTerm, loadProducts]);
 
     useEffect(() => {
         const handleScroll = () => {
             if (
-                window.innerHeight + document.documentElement.scrollTop >= 
-                document.documentElement.offSetHeight - 200 &&
+                window.innerHeight + window.pageYOffset >=
+                document.documentElement.scrollHeight - 200 &&
                 !loading &&
-                hasMore
+                hasMore &&
+                !searchTerm
             ) {
-                loadProducts();
+                setPage(prev => prev + 1);
             }
         };
 
         window.addEventListener("scroll", handleScroll);
         return () => window.removeEventListener("scroll", handleScroll);
-    }, [loadProducts, loading, hasMore]);
+    }, [loading, hasMore, searchTerm]);
 
-
-    const filteredProducts = searchTerm ? products.filter(product => 
-        product.title.toLowerCase().includes(searchTerm.toLowerCase())) : products;
-    
-    if (loading) return <LoadingSpinner />
+    const handleSearchChange = (e) => {
+        const value = e.target.value;
+        setSearchInput(value);
+        debouncedSearch(value);
+    };
 
     return (
         <div className={styles.homeContainer}>
             <Header />
-            
+
             <div className={styles.searchContainer}>
-                <input 
-                    type="text" 
-                    placeholder="Try searching for products..."
-                    value={searchTerm}
-                    onChange={(e) => setSearchTerm(e.target.value)} 
+                <input
+                    type="text"
+                    placeholder="Search product titles..."
+                    value={searchInput}
+                    onChange={handleSearchChange}
                     className={styles.searchInput}
                 />
             </div>
 
             <div className={styles.productsGrid}>
-                {filteredProducts.map(product => (
+                {products.map(product => (
                     <ProductCard
                         key={product.id}
                         product={product}
@@ -88,9 +109,16 @@ export function Home() {
             </div>
 
             {loading && <LoadingSpinner />}
-            {!hasMore && !loading && (
-                <p className={styles.endMessage}>You've reached the end of products</p>
+            {!hasMore && !loading && products.length > 0 && (
+                <p className={styles.endMessage}>
+                    {searchTerm ? "End of search results" : "You've reached the end of products"}
+                </p>
+            )}
+            {!loading && products.length === 0 && (
+                <p className={styles.endMessage}>
+                    {searchTerm ? "No products found matching your search" : "No products available"}
+                </p>
             )}
         </div>
     );
-};
+}

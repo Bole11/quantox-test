@@ -9,6 +9,7 @@ export const ProductCard = ({ product }) => {
             className={styles.productCard}
         >
             <img 
+                loading="lazy"
                 src={product.thumbnail} 
                 alt={product.title}
                 className={styles.productImage} 
