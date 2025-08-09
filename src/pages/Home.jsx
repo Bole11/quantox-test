@@ -30,32 +30,33 @@ export function Home() {
     }, [debouncedSearch]);
 
     const loadProducts = useCallback(async () => {
-        if (loading) return;
-        
-        setLoading(true);
+    if (loading) return;
+    
+    setLoading(true);
         try {
+            const limit = 10;
+            const skip = (page - 1) * limit;
             let res;
+
             if (searchTerm) {
-                res = await productsApi.search(searchTerm);
-                setProducts(res.data.products || []);
-                setHasMore(false);
+                res = await productsApi.search(searchTerm, limit, skip);
             } else {
-                const limit = 10;
-                const skip = (page - 1) * limit;
                 res = await productsApi.getAll(`?limit=${limit}&skip=${skip}`);
-                
-                setProducts(prev => 
-                    page === 1 
-                        ? res.data.products 
-                        : [...prev, ...res.data.products]
-                );
-                setHasMore(res.data.products.length === limit);
             }
-        } catch (error) {
-            console.error("Failed to load products", error);
-        } finally {
-            setLoading(false);
-        }
+
+            setProducts(prev => 
+                page === 1 
+                    ? res.data.products 
+                    : [...prev, ...res.data.products]
+            );
+
+            setHasMore(res.data.products.length === limit);
+
+            } catch (error) {
+                console.error("Failed to load products", error);
+            } finally {
+                setLoading(false);
+            }
     }, [page, searchTerm, loading]);
 
     useEffect(() => {
