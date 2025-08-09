@@ -1,6 +1,6 @@
 import { ProductCard } from "../components/ProductCard.jsx";
 import { Header } from "../components/Header.jsx";
-import { useState, useEffect, useCallback, useRef } from "react";
+import { useState, useEffect, useRef } from "react";
 import { useAuth } from "../context/AuthContext.jsx";
 import { productsApi } from "../api/auth.js";
 import { LoadingSpinner } from "../components/LoadingSpinner.jsx";
@@ -10,79 +10,74 @@ import { debounce } from "lodash";
 export function Home() {
     const [products, setProducts] = useState([]);
     const [loading, setLoading] = useState(false);
-    const [searchTerm, setSearchTerm] = useState('');
     const [searchInput, setSearchInput] = useState('');
     const [page, setPage] = useState(1);
     const [hasMore, setHasMore] = useState(true);
     const { user } = useAuth();
+    const loadingRef = useRef(false);
 
-    const debouncedSearch = useRef(
-        debounce((term) => {
-            setSearchTerm(term);
+    const debouncedSearch = debounce((value) => {
+        if (value !== searchInput) {
             setPage(1);
-        }, 500)
-    ).current;
+            setProducts([]);
+            setSearchInput(value);
+        }
+    }, 500);
 
     useEffect(() => {
-        return () => {
-            debouncedSearch.cancel();
-        };
-    }, [debouncedSearch]);
+        const fetchProducts = async () => {
+            if (loadingRef.current) return;
+            
+            loadingRef.current = true;
+            setLoading(true);
+            
+            try {
+                const limit = 10;
+                const skip = (page - 1) * limit;
+                let res;
+                let filtered = [];
 
-    const loadProducts = useCallback(async () => {
-    if (loading) return;
-    
-    setLoading(true);
-        try {
-            const limit = 10;
-            const skip = (page - 1) * limit;
-            let res;
+                if (searchInput.trim()) {
+                    res = await productsApi.search(searchInput, limit, skip);
+                    filtered = res.data.products.filter((product => product.title.toLowerCase().includes(searchInput.toLocaleLowerCase())));
+                } else {
+                    res = await productsApi.getAll(limit, skip);
+                }
 
-            if (searchTerm) {
-                res = await productsApi.search(searchTerm, limit, skip);
-            } else {
-                res = await productsApi.getAll(`?limit=${limit}&skip=${skip}`);
-            }
+                !searchInput ? 
+                setProducts(prev => [...prev, ...res.data.products]) :
+                setProducts(prev => [...prev, ...filtered]);
 
-            setProducts(prev => 
-                page === 1 
-                    ? res.data.products 
-                    : [...prev, ...res.data.products]
-            );
-
-            setHasMore(res.data.products.length === limit);
-
+                setHasMore(res.data.products.length === limit);
+                
             } catch (error) {
                 console.error("Failed to load products", error);
             } finally {
+                loadingRef.current = false;
                 setLoading(false);
             }
-    }, [page, searchTerm, loading]);
+        };
 
-    useEffect(() => {
-        loadProducts();
-    }, [page, searchTerm, loadProducts]);
+        fetchProducts();
+    }, [page, searchInput]);
 
     useEffect(() => {
         const handleScroll = () => {
             if (
-                window.innerHeight + window.pageYOffset >=
-                document.documentElement.scrollHeight - 200 &&
-                !loading &&
-                hasMore &&
-                !searchTerm
+                window.innerHeight + window.scrollY >= document.body.offsetHeight - 500 &&
+                !loadingRef.current &&
+                hasMore
             ) {
                 setPage(prev => prev + 1);
             }
         };
 
-        window.addEventListener("scroll", handleScroll);
-        return () => window.removeEventListener("scroll", handleScroll);
-    }, [loading, hasMore, searchTerm]);
+        window.addEventListener('scroll', handleScroll);
+        return () => window.removeEventListener('scroll', handleScroll);
+    }, [hasMore]);
 
     const handleSearchChange = (e) => {
         const value = e.target.value;
-        setSearchInput(value);
         debouncedSearch(value);
     };
 
@@ -94,7 +89,6 @@ export function Home() {
                 <input
                     type="text"
                     placeholder="Search product titles..."
-                    value={searchInput}
                     onChange={handleSearchChange}
                     className={styles.searchInput}
                 />
@@ -110,14 +104,14 @@ export function Home() {
             </div>
 
             {loading && <LoadingSpinner />}
-            {!hasMore && !loading && products.length > 0 && (
+            {!hasMore && products.length > 0 && (
                 <p className={styles.endMessage}>
-                    {searchTerm ? "End of search results" : "You've reached the end of products"}
+                    No more products to load
                 </p>
             )}
             {!loading && products.length === 0 && (
                 <p className={styles.endMessage}>
-                    {searchTerm ? "No products found matching your search" : "No products available"}
+                    {searchInput ? "No products found" : "Loading products..."}
                 </p>
             )}
         </div>

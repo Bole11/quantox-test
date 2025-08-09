@@ -48,7 +48,7 @@ export const authApi = {
 };
 
 export const productsApi = {
-    getAll: (query = '') => api.get(`/products${query}`),
+    getAll: (limit = 10, skip = 0) => api.get(`/products?limit=${limit}&skip=${skip}`),
     search: (term, limit = 10, skip = 0) => api.get(`/products/search?q=${term}&limit=${limit}&skip=${skip}`),
     getById: (id) => api.get(`/products/${id}`)
 };
