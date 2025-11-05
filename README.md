@@ -4,7 +4,6 @@
 A technical assessment project featuring a complete web application with user authentication, theme switching, and product management using a JSON-based backend approach.
 
 ## Live Demo & Test Credentials
-- **Live Demo:** [Your Netlify/Vercel Link Here]
 - **Test Credentials:**
   - user: `emily`
   - pass: `emilyspass`
@@ -16,7 +15,6 @@ A technical assessment project featuring a complete web application with user au
 - Local storage persistence for user data and preferences
 
 - ## Technologies Used
-- **Frontend:** React
+- **Frontend:** [React/HTML/CSS]
 - **Data Handling:** JSON with fetch/axios
 - **Storage:** Local Storage for themes and user sessions
-- **Styling:** CSS with custom properties for theming
